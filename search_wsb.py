@@ -10,11 +10,11 @@ start_time=int(datetime.datetime(2020, 1, 1).timestamp())
 
 submissions = (api.search_submissions(after=start_time,
                             subreddit='wallstreetbets',
-                            filter = ['title', 'selftext', 'num_comments', 'score'],
+                            filter = ['title', 'selftext', 'num_comments', 'score', 'description'],
                             limit = 50))
 
 
-dict = {"Title": None, "#Comments": None, "Score": None, "Symbols": None}
+dict = {"Title": None,"#Comments": None, "Score": None, "Symbols": None}
 wsb_dict = {"Data":[]}
 
 
@@ -30,7 +30,7 @@ for submission in submissions:
         dict["Symbols"]=cashtags
         wsb_dict["Data"].append(dict)
 
-
+print(wsb_dict)
 
 #JSON DATA DUMPING
 with open('wsb.json', 'w') as fp:
