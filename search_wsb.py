@@ -22,7 +22,10 @@ for month in range(1,13):
 
         for submission in submissions:
             if hasattr(submission, 'selftext'):
-                if "[deleted]" not in submission.selftext and "[removed]" not in submission.selftext:
+                not_del = "[deleted]" not in submission.selftext
+                not_rm = "[removed]" not in submission.selftext
+                not_emp = len(submission.selftext) != 0
+                if not_del and not_rm and not_emp:
                     # ts = int(submission.created_utc)
                     # post_time = datetime.datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
                     dict = {"Title": None, "#Comments": None, "Score": None, "Symbols": None, "Selftext": None}
