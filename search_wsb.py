@@ -1,5 +1,6 @@
 import json
 import psaw
+from heapsort import MaxHeap
 
 from psaw import PushshiftAPI
 api = PushshiftAPI()
@@ -19,6 +20,12 @@ for month in range(1,13):
 
 
         wsb_dict = {"Data":[]}
+
+        # make empty dictionary to hold key:value, cashtag:score
+        cashtags_dict = {}
+
+        #initialize heap here
+        heap = MaxHeap()
 
         for submission in submissions:
             if hasattr(submission, 'selftext'):
@@ -41,8 +48,25 @@ for month in range(1,13):
                         dict["Symbols"]=cashtags
                         dict["Selftext"]=submission.selftext
                         wsb_dict["Data"].append(dict)
+                        stock_score = submission.num_comments + 3 # temporary scores
+                        if cashtags[0] in cashtags_dict: # only checks the first cashtag in a single post, needs to be updated 
+                            cashtags_dict[cashtags[0]] += stock_score
+                            heap.push(cashtags_dict[cashtags[0]]) 
+                        else:
+                            cashtags_dict[cashtags[0]] = stock_score
+                            heap.push(stock_score) 
+                        
+                         
+                        #calculate post score = numcomments + 3 (for mention) for now
 
         #JSON DATA DUMPING
+        for i in range(1, 4):
+            print()
+            print(heap.pop())
+        # print(heap.peek()) ## testing 
         filename = 'wsb' + str(month) + '-' + str(day) + '.json'
         with open(filename, 'w') as fp:
             json.dump(wsb_dict, fp, indent=1)
+
+    # print(cashtags_dict)
+
