@@ -36,14 +36,13 @@ for month in range(1,13):
                         words.append(word)
                     cashtags = list(set(filter(lambda word: word.lower().startswith("$"), words)))
                     cashtags = list(set(filter(lambda word: word[1:].isalpha(), cashtags)))
+                    cashtags = list(map(lambda x:x.upper(), cashtags))
                     if len(cashtags) > 0:
                         dict["Title"] = submission.title
                         dict["#Comments"] = submission.num_comments
                         dict["Score"] = submission.score
                         dict["Symbols"]=cashtags
                         dict["Selftext"]=submission.selftext
-                        submission_score = 3 + submission.num_comments + submission.score
-                        dict["Submission_score"] = submission_score
                         wsb_dict["Data"].append(dict)
 
                         #calculate the score of each submission and store it in a variable submission_score
@@ -56,7 +55,7 @@ for month in range(1,13):
                             elif symbol in daily_scores_dict:
                                 daily_scores_dict[symbol] += submission_score
                             
-        #print("Done")
+        print("Data scraping on " + str(month)+"-"+ str(day) + " done")
 
 
         #JSON DATA DUMPING
