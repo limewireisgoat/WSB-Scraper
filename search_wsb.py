@@ -7,6 +7,8 @@ api = PushshiftAPI()
 import datetime
 tz_utc = datetime.timezone.utc
 days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31]
+
+
 for month in range(1,13):
     for day in range(1,days_in_month[month-1]+1):
         start_time=int(datetime.datetime(2021, month, day, 0, 0, 0, 0, tz_utc).timestamp())
@@ -19,7 +21,7 @@ for month in range(1,13):
 
 
         wsb_dict = {"Data":[]}
-
+        daily_scores_dict = {}
         for submission in submissions:
             if hasattr(submission, 'selftext'):
                 not_del = "[deleted]" not in submission.selftext
@@ -40,9 +42,29 @@ for month in range(1,13):
                         dict["Score"] = submission.score
                         dict["Symbols"]=cashtags
                         dict["Selftext"]=submission.selftext
+                        submission_score = 3 + submission.num_comments + submission.score
+                        dict["Submission_score"] = submission_score
                         wsb_dict["Data"].append(dict)
+
+                        #calculate the score of each submission and store it in a variable submission_score
+                        submission_score = 3 + submission.num_comments + submission.score
+                       
+                        #Add a symbol to the dictionnary or update the symbol's score
+                        for symbol in cashtags:
+                            if symbol not in daily_scores_dict:
+                                daily_scores_dict[symbol] = submission_score
+                            elif symbol in daily_scores_dict:
+                                daily_scores_dict[symbol] += submission_score
+                            
+       # print("Done")
+
 
         #JSON DATA DUMPING
         filename = 'wsb' + str(month) + '-' + str(day) + '.json'
         with open(filename, 'w') as fp:
             json.dump(wsb_dict, fp, indent=1)
+        
+        filename2 = 'score' + str(month) + '-' + str(day) + '.json'
+        with open(filename2, 'w') as fp:
+            json.dump(daily_scores_dict, fp, indent = 1)
+        
