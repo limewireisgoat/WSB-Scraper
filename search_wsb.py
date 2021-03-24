@@ -56,7 +56,7 @@ for month in range(1,13):
                             elif symbol in daily_scores_dict:
                                 daily_scores_dict[symbol] += submission_score
                             
-       # print("Done")
+        #print("Done")
 
 
         #JSON DATA DUMPING
