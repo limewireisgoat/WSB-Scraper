@@ -1,6 +1,7 @@
 import json
 import psaw
 from heapsort import MaxHeap
+import time
 
 from psaw import PushshiftAPI
 api = PushshiftAPI()
@@ -20,12 +21,13 @@ for month in range(1,13):
 
 
         wsb_dict = {"Data":[]}
-
         # make empty dictionary to hold key:value, cashtag:score
-        cashtags_dict = {}
+        daily_scores_dict = {}
 
         #initialize heap here
         heap = MaxHeap()
+
+        start_time = 0
 
         for submission in submissions:
             if hasattr(submission, 'selftext'):
@@ -41,6 +43,7 @@ for month in range(1,13):
                         words.append(word)
                     cashtags = list(set(filter(lambda word: word.lower().startswith("$"), words)))
                     cashtags = list(set(filter(lambda word: word[1:].isalpha(), cashtags)))
+                    cashtags = list(map(lambda x:x.upper(), cashtags))
                     if len(cashtags) > 0:
                         dict["Title"] = submission.title
                         dict["#Comments"] = submission.num_comments
@@ -48,25 +51,37 @@ for month in range(1,13):
                         dict["Symbols"]=cashtags
                         dict["Selftext"]=submission.selftext
                         wsb_dict["Data"].append(dict)
-                        stock_score = submission.num_comments + 3 # temporary scores
-                        if cashtags[0] in cashtags_dict: # only checks the first cashtag in a single post, needs to be updated 
-                            cashtags_dict[cashtags[0]] += stock_score
-                            heap.push(cashtags_dict[cashtags[0]]) 
-                        else:
-                            cashtags_dict[cashtags[0]] = stock_score
-                            heap.push(stock_score) 
-                        
-                         
-                        #calculate post score = numcomments + 3 (for mention) for now
 
-        #JSON DATA DUMPING
+                        submission_score = 3 + submission.num_comments + submission.score
+
+                        #Add a symbol to the dictionnary or update the symbol's score
+                        start_time = time.time()
+                        for symbol in cashtags:
+                            if symbol not in daily_scores_dict:
+                                daily_scores_dict[symbol] = submission_score
+                            elif symbol in daily_scores_dict:
+                                daily_scores_dict[symbol] += submission_score
+
+        # start_time = time.time()
+        # insert finalized values into the max heap through a for loop
+        for symbol in daily_scores_dict:
+            heap.push(daily_scores_dict[symbol])
+        #then search for top 3 values                
         for i in range(1, 4):
-            print()
-            print(heap.pop())
-        # print(heap.peek()) ## testing 
+            # print(heap.peek())
+            value = heap.pop()
+            for symbol in daily_scores_dict:
+                if daily_scores_dict[symbol] == value:
+                    print(symbol , ":" , value)
+        print("--- %s seconds ---" % (time.time() - start_time))
+
+
+        # print(heap.peek()) ## testing
+        # JSON DATA DUMPING 
         filename = 'wsb' + str(month) + '-' + str(day) + '.json'
         with open(filename, 'w') as fp:
             json.dump(wsb_dict, fp, indent=1)
+            json.dump(daily_scores_dict, fp, indent = 1)
 
     # print(cashtags_dict)
 
