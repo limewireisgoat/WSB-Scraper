@@ -5,13 +5,16 @@ import datetime
 from psaw import PushshiftAPI
 from heapsort import MaxHeap
 from search_stocks import get_change
+from file_handling import *
 
 api = PushshiftAPI()
+check_for_dir()
 tz_utc = datetime.timezone.utc
 days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31]
 for month in range(1,13):
     for day in range(1,days_in_month[month-1]+1):
-        start_time=int(datetime.datetime(2021, month, day, 0, 0, 0, 0, tz_utc).timestamp())
+        start_datetime = datetime.datetime(2021, month, day, 0, 0, 0, 0, tz_utc)
+        start_time=int(start_datetime.timestamp())
         end_time=int(datetime.datetime(2021, month, day, 23, 59, 59, 99, tz_utc).timestamp())
 
         submissions = (api.search_submissions(after=start_time,
@@ -28,7 +31,7 @@ for month in range(1,13):
         heap = MaxHeap()
 
         start_time = 0
-
+        print('Scraping for reddit posts on ' + str(start_datetime))
         for submission in submissions:
             if hasattr(submission, 'selftext'):
                 not_del = "[deleted]" not in submission.selftext
@@ -64,23 +67,35 @@ for month in range(1,13):
         # insert finalized values into the max heap through a for loop
         for symbol in daily_scores_dict:
             heap.push(daily_scores_dict[symbol])
-        #then search for top 3 values                
-        for i in range(1, 4):
+        #then search for top 3 values
+        top3 = {}
+        symbol_json = {}
+        for i in range(3):
             # print(heap.peek())
             value = heap.pop()
             for symbol in daily_scores_dict:
-                if daily_scores_dict[symbol] == value:
-                    print(symbol , ":" , value)
-                    percent_change = get_change(symbol, start_time)
-                    print(percent_change)
-        print("--- %s seconds ---" % (time.time() - start_time))
-
+                if daily_scores_dict[symbol] == value and symbol not in top3:
+                    # print(symbol , ":" , value)
+                    top3[symbol] = value
+                    percent_change = get_change(symbol[1:], start_datetime)
+                    symbol_json[symbol] = {"score":daily_scores_dict[symbol], "change":percent_change}
+        # while len(symbol_json) > 3:
+        #     symbol_json.popitem()
+        # filename = 'results' + str(month) + '-' + str(day) + '.json'
+        # with open(filename,'w') as fp:
+        #     json.dump(symbol_json, fp, indent=1)
+        write_json('results', symbol_json, './results/', day, month)
+        total_time = time.time() - start_time
+        # print("--- %s seconds ---" % (time.time() - start_time))
+        write_csv(len(daily_scores_dict), total_time)
 
         # print(heap.peek()) ## testing
         # JSON DATA DUMPING 
-        filename = 'wsb' + str(month) + '-' + str(day) + '.json'
-        with open(filename, 'w') as fp:
-            json.dump(wsb_dict, fp, indent=1)
-            json.dump(daily_scores_dict, fp, indent = 1)
+        # filename = 'wsb' + str(month) + '-' + str(day) + '.json'
+        # with open(filename, 'w') as fp:
+        #     json.dump(wsb_dict, fp, indent=1)
+        #     json.dump(daily_scores_dict, fp, indent = 1)
+        write_json('wsb', wsb_dict, './posts/', day, month)
+        write_json('scores', daily_scores_dict, './scores/', day, month)
 
     # print(cashtags_dict)
