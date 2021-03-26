@@ -5,13 +5,13 @@
    "#Comments": 16,
    "Score": 1,
    "Symbols": [
+    "$GME",
     "$BABA",
-    "$FB",
     "$CRM",
     "$PLTR",
     "$AMZN",
-    "$PFE",
-    "$GME"
+    "$FB",
+    "$PFE"
    ],
    "Selftext": "I know everyone is already holding $GME and $PLTR until they lands on the moon but maybe we can find out what new tickers everyone is holding, why and what are their expectations.\n\nHere is a list of my current positions;\n\n* 70 shares of $BABA at an average of $245 with a price target of $265, where I'll liquidate unless the political environment gets better.\n   * COVID proof\n   * Solid financials, much more liquid than Amazon\n   * China is bound to become the largest economy\n   * Political uncertainties are exaggerated\n* 70 shares of $CRM at $221 with a price target of $230. Have made this same play quite a few times in the last 2 months.\n   * COVID proof\n   * A solid company run by a solid CEO with good growth and financials\n   * Slack was purchased for $28b but the market has wiped 26% of its market cap off, which is more than $50b so at the very least the overreaction is extended by at least $22b (a 10% increase in market cap from current levels)\n   * Short-term PT of $230 but have no doubt this can break above $275 in 2021. A 24% upside.\n* 24 shares of $FB at $273 with a price target of $280. Have also done this multiple times during the last few months.\n   * COVID proof\n   * Earnings coming up near the end of January.\n   * Zuck might be a lizard, but those IG \"influencers\" you follow from your fake account so your girlfriend doesn't find out will only keep luring you back in.\n   * Political risks surrounding breakup are exaggerated and seem to be an optic play to gain public confidence. Even if this is not the case, the first hearing is years away.\n   * Has the potential to breach $325 during 2021. An upside of 20%.\n* 4 shares of $AMZN at $3250 with a price target of $3350 at least. Have made a bit over $5k only trading swings between $3000 and $3350.\n   * COVID proof\n   * Earnings coming up near the end of January.\n   * Possible to reach ATH which is around $3500 near earnings.\n   * Possible to breach $4000 during the year providing an upside of 23%.\n* 275 shares of $PFE at average $38.62 with a price target of $41-42, not sure how this will go. Have made this play once before when I cashed out at $42.75 just a few weeks ago.\n   * Only speculative play in my portfolio\n   * Not a hold in the long run as this stock is as limp as they come but a reasonable dividend yield. So, not really worried about losing money.\n\nPretty boring shit, no $GME or $PLTR here but looking forward to seeing what other tickers the community is holding on to."
   },
@@ -66,15 +66,15 @@
    "#Comments": 52,
    "Score": 1,
    "Symbols": [
-    "$FB",
-    "$PTON",
-    "$PLTR",
-    "$SNAP",
-    "$U",
-    "$GOOG",
-    "$IAC",
     "$NEURALINK",
-    "$HYNDAI"
+    "$PTON",
+    "$HYNDAI",
+    "$PLTR",
+    "$FB",
+    "$GOOG",
+    "$SNAP",
+    "$IAC",
+    "$U"
    ],
    "Selftext": "Tracking stonks which enable a future as depicted in various seasons of Black Mirror. Got any additions?\n\n$U (powering the metaverse)\n$PLTR (government surveillance)\n$FB (social scoring) \n$PTON (cycle for energy)\n$SNAP (glasses powering a digital diary)\n$Hyndai motor group (robotics through Boston Dynamics subsidiary)\n$GOOG (general AI / via Deepmind subsidiary)\n$IAC (social comparability through various dating/ matching platforms \n$Neuralink once Papa Elon gets on with it.\n\n\ud83d\ude80\n\nWhat else"
   },
@@ -116,20 +116,20 @@
   }
  ]
 }{
+ "$GME": 257,
  "$BABA": 20,
- "$FB": 76,
  "$CRM": 20,
  "$PLTR": 76,
  "$AMZN": 20,
+ "$FB": 76,
  "$PFE": 20,
- "$GME": 257,
  "$TSLA": 69,
  "$LGVW": 15,
- "$PTON": 56,
- "$SNAP": 56,
- "$U": 56,
- "$GOOG": 56,
- "$IAC": 56,
  "$NEURALINK": 56,
- "$HYNDAI": 56
+ "$PTON": 56,
+ "$HYNDAI": 56,
+ "$GOOG": 56,
+ "$SNAP": 56,
+ "$IAC": 56,
+ "$U": 56
 }

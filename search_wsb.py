@@ -66,13 +66,16 @@ for month in range(1,13):
         # insert finalized values into the max heap through a for loop
         for symbol in daily_scores_dict:
             heap.push(daily_scores_dict[symbol])
-        #then search for top 3 values                
+        #then search for top 3 values
+        top3 = {}               
         for i in range(1, 4):
             # print(heap.peek())
             value = heap.pop()
             for symbol in daily_scores_dict:
-                if daily_scores_dict[symbol] == value:
-                    print(symbol , ":" , value)
+                if daily_scores_dict[symbol] == value and symbol not in top3:
+                    top3[symbol] = value 
+                    # print(symbol , ":" , value)
+        print(top3)
         print("--- %s seconds ---" % (time.time() - start_time))
 
 
