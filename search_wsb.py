@@ -1,17 +1,21 @@
 import json
 import psaw
-
-from psaw import PushshiftAPI
-api = PushshiftAPI()
-
+import time
 import datetime
+from psaw import PushshiftAPI
+from heapsort import MaxHeap
+from search_stocks import get_change
+from file_handling import *
+
+api = PushshiftAPI()
+check_for_dir()
 tz_utc = datetime.timezone.utc
 days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31]
 
-
 for month in range(1,13):
     for day in range(1,days_in_month[month-1]+1):
-        start_time=int(datetime.datetime(2021, month, day, 0, 0, 0, 0, tz_utc).timestamp())
+        start_datetime = datetime.datetime(2021, month, day, 0, 0, 0, 0, tz_utc)
+        start_time=int(start_datetime.timestamp())
         end_time=int(datetime.datetime(2021, month, day, 23, 59, 59, 99, tz_utc).timestamp())
 
         submissions = (api.search_submissions(after=start_time,
@@ -21,7 +25,15 @@ for month in range(1,13):
 
 
         wsb_dict = {"Data":[]}
+        # make empty dictionary to hold key:value, cashtag:score
         daily_scores_dict = {}
+
+        #initialize heap here
+        heap = MaxHeap()
+
+        start_time = 0
+        print('Scraping for reddit posts on ' + str(start_datetime))
+
         for submission in submissions:
             if hasattr(submission, 'selftext'):
                 not_del = "[deleted]" not in submission.selftext
@@ -44,26 +56,46 @@ for month in range(1,13):
                         dict["Symbols"]=cashtags
                         dict["Selftext"]=submission.selftext
                         wsb_dict["Data"].append(dict)
-
-                        #calculate the score of each submission and store it in a variable submission_score
                         submission_score = 3 + submission.num_comments + submission.score
-                       
                         #Add a symbol to the dictionnary or update the symbol's score
+                        start_time = time.time()
                         for symbol in cashtags:
                             if symbol not in daily_scores_dict:
                                 daily_scores_dict[symbol] = submission_score
                             elif symbol in daily_scores_dict:
                                 daily_scores_dict[symbol] += submission_score
-                            
-        print("Data scraping on " + str(month)+"-"+ str(day) + " done")
 
+        # start_time = time.time()
+        # insert finalized values into the max heap through a for loop
+        for symbol in daily_scores_dict:
+            heap.push(daily_scores_dict[symbol])
+        #then search for top 3 values
+        top3 = {}
+        symbol_json = {}
+        for i in range(3):
+            # print(heap.peek())
+            value = heap.pop()
+            for symbol in daily_scores_dict:
+                if daily_scores_dict[symbol] == value and symbol not in top3:
+                    # print(symbol , ":" , value)
+                    top3[symbol] = value
+                    percent_change = get_change(symbol[1:], start_datetime)
+                    symbol_json[symbol] = {"score":daily_scores_dict[symbol], "change":percent_change}
+        # while len(symbol_json) > 3:
+        #     symbol_json.popitem()
+        # filename = 'results' + str(month) + '-' + str(day) + '.json'
+        # with open(filename,'w') as fp:
+        #     json.dump(symbol_json, fp, indent=1)
+        write_json('results', symbol_json, './results/', day, month)
+        total_time = time.time() - start_time
+        # print("--- %s seconds ---" % (time.time() - start_time))
+        write_csv(len(daily_scores_dict), total_time)
 
-        #JSON DATA DUMPING
-        filename = 'wsb' + str(month) + '-' + str(day) + '.json'
-        with open(filename, 'w') as fp:
-            json.dump(wsb_dict, fp, indent=1)
-        
-        filename2 = 'score' + str(month) + '-' + str(day) + '.json'
-        with open(filename2, 'w') as fp:
-            json.dump(daily_scores_dict, fp, indent = 1)
-        
+        # print(heap.peek()) ## testing
+        # JSON DATA DUMPING 
+        # filename = 'wsb' + str(month) + '-' + str(day) + '.json'
+        # with open(filename, 'w') as fp:
+        #     json.dump(wsb_dict, fp, indent=1)
+        #     json.dump(daily_scores_dict, fp, indent = 1)
+        write_json('wsb', wsb_dict, './posts/', day, month)
+        write_json('scores', daily_scores_dict, './scores/', day, month)
