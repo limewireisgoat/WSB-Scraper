@@ -11,6 +11,7 @@ api = PushshiftAPI()
 check_for_dir()
 tz_utc = datetime.timezone.utc
 days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31]
+
 for month in range(1,13):
     for day in range(1,days_in_month[month-1]+1):
         start_datetime = datetime.datetime(2021, month, day, 0, 0, 0, 0, tz_utc)
@@ -32,6 +33,7 @@ for month in range(1,13):
 
         start_time = 0
         print('Scraping for reddit posts on ' + str(start_datetime))
+
         for submission in submissions:
             if hasattr(submission, 'selftext'):
                 not_del = "[deleted]" not in submission.selftext
@@ -97,5 +99,3 @@ for month in range(1,13):
         #     json.dump(daily_scores_dict, fp, indent = 1)
         write_json('wsb', wsb_dict, './posts/', day, month)
         write_json('scores', daily_scores_dict, './scores/', day, month)
-
-    # print(cashtags_dict)
