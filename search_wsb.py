@@ -1,10 +1,12 @@
 import json
 import psaw
-
-from psaw import PushshiftAPI
-api = PushshiftAPI()
-
+import time
 import datetime
+from psaw import PushshiftAPI
+from heapsort import MaxHeap
+from search_stocks import get_change
+
+api = PushshiftAPI()
 tz_utc = datetime.timezone.utc
 days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31]
 for month in range(1,13):
@@ -19,6 +21,13 @@ for month in range(1,13):
 
 
         wsb_dict = {"Data":[]}
+        # make empty dictionary to hold key:value, cashtag:score
+        daily_scores_dict = {}
+
+        #initialize heap here
+        heap = MaxHeap()
+
+        start_time = 0
 
         for submission in submissions:
             if hasattr(submission, 'selftext'):
@@ -34,6 +43,7 @@ for month in range(1,13):
                         words.append(word)
                     cashtags = list(set(filter(lambda word: word.lower().startswith("$"), words)))
                     cashtags = list(set(filter(lambda word: word[1:].isalpha(), cashtags)))
+                    cashtags = list(map(lambda x:x.upper(), cashtags))
                     if len(cashtags) > 0:
                         dict["Title"] = submission.title
                         dict["#Comments"] = submission.num_comments
@@ -46,4 +56,38 @@ for month in range(1,13):
         filename = 'wsb' + str(month) + '-' + str(day) + '.json'
         with open(filename, 'w') as fp:
             json.dump(wsb_dict, fp, indent=1)
+            submission_score = 3 + submission.num_comments + submission.score
 
+            #Add a symbol to the dictionnary or update the symbol's score
+            start_time = time.time()
+            for symbol in cashtags:
+                if symbol not in daily_scores_dict:
+                    daily_scores_dict[symbol] = submission_score
+                elif symbol in daily_scores_dict:
+                    daily_scores_dict[symbol] += submission_score
+
+        # start_time = time.time()
+        # insert finalized values into the max heap through a for loop
+        for symbol in daily_scores_dict:
+            heap.push(daily_scores_dict[symbol])
+        #then search for top 3 values                
+        for i in range(1, 4):
+            # print(heap.peek())
+            value = heap.pop()
+            print(value)
+            for symbol in daily_scores_dict:
+                if daily_scores_dict[symbol] == value:
+                    print(symbol , ":" , value)
+                    percent_change = get_change(symbol, start_time)
+                    print(percent_change)
+        print("--- %s seconds ---" % (time.time() - start_time))
+
+
+        # print(heap.peek()) ## testing
+        # JSON DATA DUMPING 
+        filename = 'wsb' + str(month) + '-' + str(day) + '.json'
+        with open(filename, 'w') as fp:
+            json.dump(wsb_dict, fp, indent=1)
+            json.dump(daily_scores_dict, fp, indent = 1)
+
+    # print(cashtags_dict)
