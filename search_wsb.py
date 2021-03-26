@@ -52,19 +52,13 @@ for month in range(1,13):
                         dict["Selftext"]=submission.selftext
                         wsb_dict["Data"].append(dict)
 
-        #JSON DATA DUMPING
-        filename = 'wsb' + str(month) + '-' + str(day) + '.json'
-        with open(filename, 'w') as fp:
-            json.dump(wsb_dict, fp, indent=1)
-            submission_score = 3 + submission.num_comments + submission.score
-
-            #Add a symbol to the dictionnary or update the symbol's score
-            start_time = time.time()
-            for symbol in cashtags:
-                if symbol not in daily_scores_dict:
-                    daily_scores_dict[symbol] = submission_score
-                elif symbol in daily_scores_dict:
-                    daily_scores_dict[symbol] += submission_score
+        #Add a symbol to the dictionnary or update the symbol's score
+        start_time = time.time()
+        for symbol in cashtags:
+            if symbol not in daily_scores_dict:
+                daily_scores_dict[symbol] = submission_score
+            elif symbol in daily_scores_dict:
+                daily_scores_dict[symbol] += submission_score
 
         # start_time = time.time()
         # insert finalized values into the max heap through a for loop
@@ -74,7 +68,6 @@ for month in range(1,13):
         for i in range(1, 4):
             # print(heap.peek())
             value = heap.pop()
-            print(value)
             for symbol in daily_scores_dict:
                 if daily_scores_dict[symbol] == value:
                     print(symbol , ":" , value)
