@@ -40,8 +40,6 @@ for month in range(1,13):
                 not_rm = "[removed]" not in submission.selftext
                 not_emp = len(submission.selftext) != 0
                 if not_del and not_rm and not_emp:
-                    # ts = int(submission.created_utc)
-                    # post_time = datetime.datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
                     dict = {"Title": None, "#Comments": None, "Score": None, "Symbols": None, "Selftext": None}
                     words = submission.selftext.split()
                     for word in submission.title.split():
@@ -81,11 +79,6 @@ for month in range(1,13):
                     top3[symbol] = value
                     percent_change = get_change(symbol[1:], start_datetime)
                     symbol_json[symbol] = {"score":daily_scores_dict[symbol], "change":percent_change}
-        # while len(symbol_json) > 3:
-        #     symbol_json.popitem()
-        # filename = 'results' + str(month) + '-' + str(day) + '.json'
-        # with open(filename,'w') as fp:
-        #     json.dump(symbol_json, fp, indent=1)
         write_json('results', symbol_json, './results/', day, month)
         total_time = time.time() - start_time
         # print("--- %s seconds ---" % (time.time() - start_time))
@@ -93,9 +86,5 @@ for month in range(1,13):
 
         # print(heap.peek()) ## testing
         # JSON DATA DUMPING 
-        # filename = 'wsb' + str(month) + '-' + str(day) + '.json'
-        # with open(filename, 'w') as fp:
-        #     json.dump(wsb_dict, fp, indent=1)
-        #     json.dump(daily_scores_dict, fp, indent = 1)
         write_json('wsb', wsb_dict, './posts/', day, month)
         write_json('scores', daily_scores_dict, './scores/', day, month)
