@@ -11,12 +11,14 @@ api = PushshiftAPI()
 check_for_dir()
 tz_utc = datetime.timezone.utc
 days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31]
-
+# Initialize csv file as empty
+with open('times.csv', 'w') as fp:
+    fp.write('')
 for month in range(1,13):
     for day in range(1,days_in_month[month-1]+1):
-        start_datetime = datetime.datetime(2021, month, day, 0, 0, 0, 0, tz_utc)
+        start_datetime = datetime.datetime(2020, month, day, 0, 0, 0, 0, tz_utc)
         start_time=int(start_datetime.timestamp())
-        end_time=int(datetime.datetime(2021, month, day, 23, 59, 59, 99, tz_utc).timestamp())
+        end_time=int(datetime.datetime(2020, month, day, 23, 59, 59, 99, tz_utc).timestamp())
 
         submissions = (api.search_submissions(after=start_time,
                                     before=end_time,

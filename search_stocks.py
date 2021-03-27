@@ -9,5 +9,7 @@ def get_change(symbol, startDate):
     end = str(endDate)[:10]
     stock_history = yf.Ticker(symbol).history(start=start, end=end)
     stock_history = stock_history['Close'].to_numpy()
+    if len(stock_history) == 0:
+        return 0
     percent_change = (stock_history[-1] - stock_history[0])/stock_history[0]
     return percent_change * 100
