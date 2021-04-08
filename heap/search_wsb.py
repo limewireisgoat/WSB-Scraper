@@ -58,14 +58,14 @@ for month in range(1,13):
                         wsb_dict["Data"].append(dict)
                         submission_score = 3 + submission.num_comments + submission.score
                         #Add a symbol to the dictionnary or update the symbol's score
-                        start_time = time.time()
+                        # start_time = time.time()
                         for symbol in cashtags:
                             if symbol not in daily_scores_dict:
                                 daily_scores_dict[symbol] = submission_score
                             elif symbol in daily_scores_dict:
                                 daily_scores_dict[symbol] += submission_score
 
-        # start_time = time.time()
+        start_time = time.time()
         # insert finalized values into the max heap through a for loop
         for symbol in daily_scores_dict:
             heap.push(daily_scores_dict[symbol])
@@ -81,8 +81,8 @@ for month in range(1,13):
                     top3[symbol] = value
                     percent_change = get_change(symbol[1:], start_datetime)
                     symbol_json[symbol] = {"score":daily_scores_dict[symbol], "change":percent_change}
-        write_json('results', symbol_json, './results/', day, month)
         total_time = time.time() - start_time
+        write_json('results', symbol_json, './results/', day, month)
         # print("--- %s seconds ---" % (time.time() - start_time))
         write_csv(len(daily_scores_dict), total_time)
 
