@@ -3,7 +3,7 @@ import psaw
 import time
 import datetime
 from psaw import PushshiftAPI
-from heapsort import MaxHeap
+from priority_queue import PriorityQueue
 from search_stocks import get_change
 from file_handling import *
 
@@ -31,7 +31,7 @@ for month in range(1,13):
         daily_scores_dict = {}
 
         #initialize heap here
-        heap = MaxHeap()
+        queue = PriorityQueue()
 
         start_time = 0
         print('Scraping for reddit posts on ' + str(start_datetime))
@@ -68,25 +68,27 @@ for month in range(1,13):
         # start_time = time.time()
         # insert finalized values into the max heap through a for loop
         for symbol in daily_scores_dict:
-            heap.push(daily_scores_dict[symbol])
+            item = {
+                'symbol':symbol,
+                'score':daily_scores_dict[symbol]
+            }
+            queue.push(item)
         #then search for top 3 values
         top3 = {}
         symbol_json = {}
         for i in range(3):
-            # print(heap.peek())
-            value = heap.pop()
-            for symbol in daily_scores_dict:
-                if daily_scores_dict[symbol] == value and symbol not in top3:
-                    # print(symbol , ":" , value)
-                    top3[symbol] = value
-                    percent_change = get_change(symbol[1:], start_datetime)
-                    symbol_json[symbol] = {"score":daily_scores_dict[symbol], "change":percent_change}
+            try:
+                value = queue.pop()
+                top3[value['symbol']] = value['score']
+                print('Top three symbols for ' + str(start_datetime))
+                print(top3)
+                percent_change = get_change(value['symbol'][1:], start_datetime)
+                symbol_json[value['symbol']] = {"score":value['score'], "change":percent_change}
+            except TypeError:
+                print('No symbols found for ' + str(start_datetime))
         write_json('results', symbol_json, './results/', day, month)
         total_time = time.time() - start_time
-        # print("--- %s seconds ---" % (time.time() - start_time))
         write_csv(len(daily_scores_dict), total_time)
-
-        # print(heap.peek()) ## testing
         # JSON DATA DUMPING 
         write_json('wsb', wsb_dict, './posts/', day, month)
         write_json('scores', daily_scores_dict, './scores/', day, month)
