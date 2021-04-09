@@ -21,3 +21,8 @@ def write_csv(num_results, time):
     filename = 'times.csv'
     with open(filename, 'a') as fp:
         fp.write(str(num_results) + ',' + str(time) + '\n')
+
+def write_csv_artificial(num_results, time):
+    filename = 'times_artificial.csv'
+    with open(filename, 'a') as fp:
+        fp.write(str(num_results) + ',' + str(time) + '\n')
