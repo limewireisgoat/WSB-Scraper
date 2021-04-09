@@ -1,5 +1,6 @@
 __pycache__/
 posts/
 results/
+scores/
 *.csv
 test.py
